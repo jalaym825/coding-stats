@@ -2,7 +2,7 @@ const axios = require("axios").default;
 
 module.exports = async (req, res) => {
     try {
-        const [rating, badges, problems] = await Promise.all([getRatings(), getBadges(), getProblems()]);
+        const [rating, badges, problems] = await Promise.all([getRatings(req.params.id), getBadges(req.params.id), getProblems(req.params.id)]);
         const user = {
             rating: rating,
             badges: badges,
@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     }
 }
 
-async function getRatings() {
+async function getRatings(id) {
     const options = {
         method: 'POST',
         url: 'https://leetcode.com/graphql',
@@ -24,7 +24,7 @@ async function getRatings() {
         },
         data: {
             query: '\n    query userContestRankingInfo($username: String!) {\n  userContestRanking(username: $username) {\n    attendedContestsCount\n    rating\n    globalRanking\n    totalParticipants\n    topPercentage\n    badge {\n      name\n    }\n  }\n \n}\n    ',
-            variables: { username: 'jalaym825' },
+            variables: { username: id },
             operationName: 'userContestRankingInfo'
         }
     };
@@ -36,7 +36,7 @@ async function getRatings() {
     });
 }
 
-async function getBadges() {
+async function getBadges(id) {
     const options = {
         method: 'POST',
         url: 'https://leetcode.com/graphql',
@@ -45,7 +45,7 @@ async function getBadges() {
         },
         data: {
             query: '\n    query userBadges($username: String!) {\n  matchedUser(username: $username) {\n    badges {\n      id\n      name\n      shortName\n      displayName\n      icon\n      hoverText\n      medal {\n        slug\n        config {\n          iconGif\n          iconGifBackground\n        }\n      }\n      creationDate\n      category\n    }\n    upcomingBadges {\n      name\n      icon\n      progress\n    }\n  }\n}\n    ',
-            variables: { username: 'jalaym825' },
+            variables: { username: id },
             operationName: 'userBadges'
         }
     };
@@ -58,7 +58,7 @@ async function getBadges() {
 }
 
 
-async function getProblems() {
+async function getProblems(id) {
     const options = {
         method: 'POST',
         url: 'https://leetcode.com/graphql',
@@ -67,7 +67,7 @@ async function getProblems() {
         },
         data: {
             query: '\n    query userProblemsSolved($username: String!) {\n  allQuestionsCount {\n    difficulty\n    count\n  }\n  matchedUser(username: $username) {\n    problemsSolvedBeatsStats {\n      difficulty\n      percentage\n    }\n    submitStatsGlobal {\n      acSubmissionNum {\n        difficulty\n        count\n      }\n    }\n  }\n}\n    ',
-            variables: { username: 'jalaym825' },
+            variables: { username: id },
             operationName: 'userProblemsSolved'
         }
     };

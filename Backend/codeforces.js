@@ -4,18 +4,18 @@ const axios = require("axios").default;
 
 module.exports = async (req, res) => {
     try {
-        res.status(200).json(await getUserInfo());
+        res.status(200).json(await getUserInfo(req.params.id));
     } catch (e) {
         res.status(500).json({ message: e.message });
         console.error(e);
     }
 }
 
-async function getUserInfo() {
+async function getUserInfo(id) {
     const options = {
         method: 'GET',
         url: 'https://codeforces.com/api/user.info',
-        params: { handles: "jalaym825" }
+        params: { handles: id }
     }
     return axios.request(options).then(async function (response) {
         const user = response.data.result[0];

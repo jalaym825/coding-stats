@@ -4,7 +4,7 @@ const cheerio = require("cheerio");
 
 module.exports = async (req, res) => {
     try {
-        const url = `https://auth.geeksforgeeks.org/user/jalaym825/practice`
+        const url = `https://auth.geeksforgeeks.org/user/${req.params.id}/practice`
 
         const { data: html } = await axios.get(url);
         const $ = cheerio.load(html);
