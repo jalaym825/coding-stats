@@ -3,28 +3,30 @@ import React from 'react'
 import image from '../assets/coding.png'
 export const OverAll = ({ Data }) => {
     return (
-        Data.LCData.loaded && Data.GFGData.loaded && Data.CCData.loaded && Data.CFData.loaded ?
-            <Card className='shadow' style={{ width: '15rem' }}>
-                <Card.Img variant="top" src={image} />
-                <Card.Body>
-                    <Card.Title>Overall Stats</Card.Title>
-                </Card.Body>
+        <>
+            {
+                Data.LCData && Data.GFGData && Data.CCData && Data.CFData ?
+                    <Card className='shadow' style={{ width: '15rem' }}>
+                        <Card.Img variant="top" src={image} />
+                        <Card.Body>
+                            <Card.Title>Overall Stats</Card.Title>
+                        </Card.Body>
 
-                <ListGroup className="list-group-flush">
-                    <ListGroup.Item>Total Problems: {Data.LCData.matchedUser.submitStats.acSubmissionNum[0].count + Data.GFGData.score_cards.total_problem_solved + Data.CCData.problems_solved.fully_solved + Data.CFData.problems_solved}</ListGroup.Item>
-                </ListGroup>
-            </Card>
-            :
-            <Card className='shadow' style={{ width: '15rem' }}>
-                <Card.Img variant="top" src={image} />
-                <Card.Body>
-                    <Card.Title>Overall Stats</Card.Title>
-                    <Placeholder as={Card.Text} animation="glow">
-                        <Placeholder xs={7} /> <Placeholder xs={4} /> <Placeholder xs={4} />{' '}
-                        <Placeholder xs={6} /> <Placeholder xs={8} />
-                    </Placeholder>
-                </Card.Body>
-            </Card>
-
+                        <ListGroup className="list-group-flush">
+                            <ListGroup.Item>Total Problems: {Data.LCData.problems.matchedUser.submitStatsGlobal.acSubmissionNum[0].count + Data.GFGData.problems_solved + Data.CCData.problems_solved + Data.CFData.problems_solved}</ListGroup.Item>
+                        </ListGroup>
+                    </Card>
+                    :
+                    <Card className='shadow' style={{ width: '15rem' }}>
+                        <Card.Img variant="top" src={image} />
+                        <Card.Body>
+                            <Card.Title>CodeChef</Card.Title>
+                        </Card.Body>
+                        <ListGroup className="list-group-flush">
+                            <ListGroup.Item><Placeholder xs={5} /> <Placeholder xs={4} /></ListGroup.Item>
+                        </ListGroup>
+                    </Card>
+            }
+        </>
     )
 }

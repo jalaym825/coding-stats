@@ -1,40 +1,47 @@
-const axios = require("axios");
-const https = require('https');
-const cheerio = require("cheerio");
+const { response } = require("express");
+
+const axios = require("axios").default;
 
 module.exports = async (req, res) => {
     try {
-        const instance = new axios.Axios({
-            baseURL: 'https://codeforces.com/profile',
-            timeout: 60000, //optional
-            httpsAgent: new https.Agent({ keepAlive: true }),
-            headers: { 'Content-Type': 'application/xml' }
-        });
-        const { data } = await instance.get(`/${req.params.id}`);
-        const $ = cheerio.load(data);
-        const user = {
-            user_rank: {
-                current: "",
-                max: ""
-            },
-            ratings: {
-                current: "",
-                max: ""
-            },
-            problems_solved: 0
-        }
-        user.user_rank.current = $('.user-rank').text().trim();
-
-        user.user_rank.max = $('.info > ul > li:nth-child(1)').text().replace(/\s+/g, ' ').trim().split(" ")[4].slice(0, -1);
-
-        user.ratings.current = parseInt($('.info > ul > li:nth-child(1)').text().replace(/\s+/g, ' ').trim().match(/(\d+)/)[0]);
-        user.ratings.max = parseInt($('.info > ul > li:nth-child(1)').text().replace(/\s+/g, ' ').trim().match(/(\d+)/)[1]);
-
-        user.problems_solved = parseInt($('._UserActivityFrame_counterValue').first().text().trim().split(" ")[0])
-
-        return user;
-
-    } catch (err) {
-        console.error(err);
+        res.status(200).json(await getUserInfo());
+    } catch (e) {
+        res.status(500).json({ message: e.message });
+        console.error(e);
     }
+}
+
+async function getUserInfo() {
+    const options = {
+        method: 'GET',
+        url: 'https://codeforces.com/api/user.info',
+        params: { handles: "jalaym825" }
+    }
+    return axios.request(options).then(async function (response) {
+        const user = response.data.result[0];
+        let submissions = await getSubmissions();
+        let solvedProblems = new Set();
+        submissions.forEach(submission => {
+            if (submission.verdict === "OK") {
+                solvedProblems.add(submission.problem.contestId + submission.problem.index);
+            }
+        });
+        user.problems_solved = solvedProblems.size;    
+        return response.data.result[0];
+    }).catch(function (error) {
+        console.error(error);
+    });
+}
+
+async function getSubmissions() {
+    const options = {
+        method: 'GET',
+        url: 'https://codeforces.com/api/user.status',
+        params: { handle: "jalaym825" }
+    }
+    return axios.request(options).then(function (response) {
+        return response.data.result;
+    }).catch(function (error) {
+        console.error(error);
+    });
 }
