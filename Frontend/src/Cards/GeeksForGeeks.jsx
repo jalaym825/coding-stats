@@ -27,7 +27,7 @@ export const GeeksForGeeks = ({ Data }) => {
           <Card className='shadow' style={{ width: '15rem' }}>
             <Card.Img variant="top" src={image} />
             <Card.Body>
-              <Card.Title>CodeChef</Card.Title>
+              <Card.Title>GeeksForGeeks</Card.Title>
             </Card.Body>
             <ListGroup className="list-group-flush">
               <ListGroup.Item><Placeholder xs={7} />  <Placeholder xs={4} /></ListGroup.Item>
