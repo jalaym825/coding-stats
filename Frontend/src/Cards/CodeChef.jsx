@@ -10,7 +10,7 @@ export const CodeChef = ({ Data }) => {
           <Card className='shadow' style={{ width: '15rem' }}>
             <Card.Img variant="top" src={image} />
             <Card.Body>
-              <Card.Title>Codechef</Card.Title>
+              <Card.Title>CodeChef</Card.Title>
             </Card.Body>
             <ListGroup className="list-group-flush">
               <ListGroup.Item>{Data.stars} 🌟</ListGroup.Item>

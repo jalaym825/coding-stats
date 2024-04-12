@@ -20,7 +20,7 @@ export const OverAll = ({ Data }) => {
                     <Card className='shadow' style={{ width: '15rem' }}>
                         <Card.Img variant="top" src={image} />
                         <Card.Body>
-                            <Card.Title>CodeChef</Card.Title>
+                            <Card.Title>Overall Stats</Card.Title>
                         </Card.Body>
                         <ListGroup className="list-group-flush">
                             <ListGroup.Item><Placeholder xs={5} /> <Placeholder xs={4} /></ListGroup.Item>
