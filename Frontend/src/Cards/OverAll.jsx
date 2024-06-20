@@ -13,7 +13,7 @@ export const OverAll = ({ Data }) => {
                         </Card.Body>
 
                         <ListGroup className="list-group-flush">
-                            <ListGroup.Item>Total Problems: {(Data.LCData && Data.LCData.problems.matchedUser.submitStatsGlobal.acSubmissionNum[0].count) + (Data.GFGData && Data.GFGData.problems_solved) + (Data.CCData && Data.CCData.problems_solved) + (Data.CFData && Data.CFData.problems_solved)}</ListGroup.Item>
+                            <ListGroup.Item>Total Problems: {(Data.LCData && Data.LCData.problems.submitStatsGlobal.acSubmissionNum[0].count) + (Data.GFGData && Data.GFGData.problems_solved) + (Data.CCData && Data.CCData.problems_solved) + (Data.CFData && Data.CFData.problems_solved)}</ListGroup.Item>
                         </ListGroup>
                     </Card>
                     {/* :

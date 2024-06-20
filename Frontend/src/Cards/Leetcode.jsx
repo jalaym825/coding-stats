@@ -3,7 +3,6 @@ import React from 'react'
 import image from '../assets/leetcode.png'
 
 export const Leetcode = ({ Data }) => {
-  console.log(Data)
   return (
     <>
       {
@@ -14,11 +13,11 @@ export const Leetcode = ({ Data }) => {
               <Card.Title>LeetCode</Card.Title>
             </Card.Body>
             <ListGroup className="list-group-flush">
-              <ListGroup.Item>Rating: {Math.round(Data.rating.userContestRanking.rating)}, Top {Data.rating.userContestRanking.topPercentage}%</ListGroup.Item>
-              <ListGroup.Item>Easy Problems: {Data.problems.matchedUser.submitStatsGlobal.acSubmissionNum[1].count}</ListGroup.Item>
-              <ListGroup.Item>Medium Problems: {Data.problems.matchedUser.submitStatsGlobal.acSubmissionNum[2].count}</ListGroup.Item>
-              <ListGroup.Item>Hard Problems: {Data.problems.matchedUser.submitStatsGlobal.acSubmissionNum[3].count}</ListGroup.Item>
-              <ListGroup.Item>Total Problems: {Data.problems.matchedUser.submitStatsGlobal.acSubmissionNum[0].count}</ListGroup.Item>
+              <ListGroup.Item>Rating: {Math.round(Data.rating.rating)}, Top {Data.rating.topPercentage}%</ListGroup.Item>
+              <ListGroup.Item>Easy Problems: {Data.problems.submitStatsGlobal.acSubmissionNum[1].count}</ListGroup.Item>
+              <ListGroup.Item>Medium Problems: {Data.problems.submitStatsGlobal.acSubmissionNum[2].count}</ListGroup.Item>
+              <ListGroup.Item>Hard Problems: {Data.problems.submitStatsGlobal.acSubmissionNum[3].count}</ListGroup.Item>
+              <ListGroup.Item>Total Problems: {Data.problems.submitStatsGlobal.acSubmissionNum[0].count}</ListGroup.Item>
               <ListGroup.Item>Current Steak: {Data.currentStreak} (Max. {Data.maxStreak})</ListGroup.Item>
             </ListGroup>
             <Card.Body>

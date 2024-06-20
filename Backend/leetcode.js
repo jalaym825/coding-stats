@@ -1,126 +1,123 @@
 const axios = require("axios").default;
 
+const BASE_URL = 'https://leetcode.com/graphql';
+const HEADERS = { 'content-type': 'application/json' };
+
 module.exports = async (req, res) => {
     try {
-        const [rating, badges, problems, {maxStreak, currentStreak}] = await Promise.all([getRatings(req.params.id), getBadges(req.params.id), getProblems(req.params.id), getStreaks(req.params.id)]);
+        const { id } = req.params;
+        const data = await getUserData(id);
         const user = {
-            rating: rating,
-            badges: badges,
-            problems: problems,
-            maxStreak: maxStreak,
-            currentStreak: currentStreak
-        }
+            rating: data.userContestRanking,
+            badges: data.matchedUser.badges,
+            problems: {
+                allQuestionsCount: data.allQuestionsCount,
+                problemsSolvedBeatsStats: data.matchedUser.problemsSolvedBeatsStats,
+                submitStatsGlobal: data.matchedUser.submitStatsGlobal
+            },
+            maxStreak: data.streaks.maxStreak,
+            currentStreak: data.streaks.currentStreak
+        };
         res.status(200).json(user);
     } catch (e) {
         res.status(500).json({ message: e.message });
-        console.log(e)
+        console.error(e);
+    }
+};
+
+async function getUserData(id) {
+    const query = `
+        query getUserData($username: String!) {
+            userContestRanking(username: $username) {
+                attendedContestsCount
+                rating
+                globalRanking
+                totalParticipants
+                topPercentage
+                badge {
+                    name
+                }
+            }
+            matchedUser(username: $username) {
+                badges {
+                    id
+                    name
+                    shortName
+                    displayName
+                    icon
+                    hoverText
+                    medal {
+                        slug
+                        config {
+                            iconGif
+                            iconGifBackground
+                        }
+                    }
+                    creationDate
+                    category
+                }
+                problemsSolvedBeatsStats {
+                    difficulty
+                    percentage
+                }
+                submitStatsGlobal {
+                    acSubmissionNum {
+                        difficulty
+                        count
+                    }
+                }
+                userCalendar {
+                    submissionCalendar
+                }
+            }
+            allQuestionsCount {
+                difficulty
+                count
+            }
+        }
+    `;
+
+    const variables = { username: id };
+    const options = {
+        method: 'POST',
+        url: BASE_URL,
+        headers: HEADERS,
+        data: { query, variables }
+    };
+
+    try {
+        const response = await axios.request(options);
+        const data = response.data.data;
+
+        const streaks = calculateStreaks(data.matchedUser.userCalendar.submissionCalendar);
+        return { ...data, streaks };
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch data');
     }
 }
 
-async function getRatings(id) {
-    const options = {
-        method: 'POST',
-        url: 'https://leetcode.com/graphql',
-        headers: {
-            'content-type': 'application/json'
-        },
-        data: {
-            query: '\n    query userContestRankingInfo($username: String!) {\n  userContestRanking(username: $username) {\n    attendedContestsCount\n    rating\n    globalRanking\n    totalParticipants\n    topPercentage\n    badge {\n      name\n    }\n  }\n \n}\n    ',
-            variables: { username: id },
-            operationName: 'userContestRankingInfo'
-        }
-    };
+function calculateStreaks(submissionCalendar) {
+    const data = JSON.parse(submissionCalendar);
+    const sortedEntries = Object.entries(data).sort((a, b) => a[0] - b[0]);
 
-    return axios.request(options).then(function (response) {
-        return response.data.data;
-    }).catch(function (error) {
-        console.error(error);
-    });
-}
+    let currentStreak = 0;
+    let maxStreak = 0;
+    let lastTimestamp = null;
 
-async function getBadges(id) {
-    const options = {
-        method: 'POST',
-        url: 'https://leetcode.com/graphql',
-        headers: {
-            'content-type': 'application/json'
-        },
-        data: {
-            query: '\n    query userBadges($username: String!) {\n  matchedUser(username: $username) {\n    badges {\n      id\n      name\n      shortName\n      displayName\n      icon\n      hoverText\n      medal {\n        slug\n        config {\n          iconGif\n          iconGifBackground\n        }\n      }\n      creationDate\n      category\n    }\n    upcomingBadges {\n      name\n      icon\n      progress\n    }\n  }\n}\n    ',
-            variables: { username: id },
-            operationName: 'userBadges'
-        }
-    };
-
-    return axios.request(options).then(function (response) {
-        return response.data.data;
-    }).catch(function (error) {
-        console.error(error);
-    });
-}
-
-
-async function getProblems(id) {
-    const options = {
-        method: 'POST',
-        url: 'https://leetcode.com/graphql',
-        headers: {
-            'content-type': 'application/json'
-        },
-        data: {
-            query: '\n    query userProblemsSolved($username: String!) {\n  allQuestionsCount {\n    difficulty\n    count\n  }\n  matchedUser(username: $username) {\n    problemsSolvedBeatsStats {\n      difficulty\n      percentage\n    }\n    submitStatsGlobal {\n      acSubmissionNum {\n        difficulty\n        count\n      }\n    }\n  }\n}\n    ',
-            variables: { username: id },
-            operationName: 'userProblemsSolved'
-        }
-    };
-
-    return axios.request(options).then(function (response) {
-        return response.data.data;
-    }).catch(function (error) {
-        console.error(error);
-    });
-}
-
-async function getStreaks(id) {
-    const options = {
-        method: 'POST',
-        url: 'https://leetcode.com/graphql',
-        headers: {
-            'content-type': 'application/json'
-        },
-        data: {
-            query: 'query userProfileCalendar($username: String!, $year: Int) {\n  matchedUser(username: $username) {\n    userCalendar(year: $year) {\n      submissionCalendar\n    }\n  }\n}',
-            variables: {username: 'jalaym825'},
-            operationName: 'userProfileCalendar'
-          }
-    };
-    return axios.request(options).then(function (response) {
-        const data = JSON.parse(response.data.data.matchedUser.userCalendar.submissionCalendar);
-        const sortedEntries = Object.entries(data).sort((a, b) => a[0] - b[0]);
-
-        let currentStreak = 0;
-        let maxStreak = 0;
-        let lastTimestamp = null;
-        
-        sortedEntries.forEach(([timestamp, value]) => {
-            if (value > 0) {
-                if (lastTimestamp === null || timestamp - lastTimestamp === 86400) {
-                    currentStreak++;
-                } else {
-                    currentStreak = 1;
-                }
-                maxStreak = Math.max(maxStreak, currentStreak);
+    sortedEntries.forEach(([timestamp, value]) => {
+        if (value > 0) {
+            if (lastTimestamp === null || timestamp - lastTimestamp === 86400) {
+                currentStreak++;
             } else {
-                currentStreak = 0;
+                currentStreak = 1;
             }
-            lastTimestamp = timestamp;
-        });
-        
-        console.log("Current streak:", currentStreak);
-        console.log("Max streak:", maxStreak);
-
-        return {currentStreak, maxStreak};
-    }).catch(function (error) {
-        console.error(error);
+            maxStreak = Math.max(maxStreak, currentStreak);
+        } else {
+            currentStreak = 0;
+        }
+        lastTimestamp = timestamp;
     });
+
+    return { currentStreak, maxStreak };
 }
