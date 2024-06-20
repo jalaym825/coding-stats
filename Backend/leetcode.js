@@ -2,11 +2,13 @@ const axios = require("axios").default;
 
 module.exports = async (req, res) => {
     try {
-        const [rating, badges, problems] = await Promise.all([getRatings(req.params.id), getBadges(req.params.id), getProblems(req.params.id)]);
+        const [rating, badges, problems, {maxStreak, currentStreak}] = await Promise.all([getRatings(req.params.id), getBadges(req.params.id), getProblems(req.params.id), getStreaks(req.params.id)]);
         const user = {
             rating: rating,
             badges: badges,
-            problems: problems
+            problems: problems,
+            maxStreak: maxStreak,
+            currentStreak: currentStreak
         }
         res.status(200).json(user);
     } catch (e) {
@@ -74,6 +76,50 @@ async function getProblems(id) {
 
     return axios.request(options).then(function (response) {
         return response.data.data;
+    }).catch(function (error) {
+        console.error(error);
+    });
+}
+
+async function getStreaks(id) {
+    const options = {
+        method: 'POST',
+        url: 'https://leetcode.com/graphql',
+        headers: {
+            'content-type': 'application/json'
+        },
+        data: {
+            query: 'query userProfileCalendar($username: String!, $year: Int) {\n  matchedUser(username: $username) {\n    userCalendar(year: $year) {\n      submissionCalendar\n    }\n  }\n}',
+            variables: {username: 'jalaym825'},
+            operationName: 'userProfileCalendar'
+          }
+    };
+    return axios.request(options).then(function (response) {
+        const data = JSON.parse(response.data.data.matchedUser.userCalendar.submissionCalendar);
+        const sortedEntries = Object.entries(data).sort((a, b) => a[0] - b[0]);
+
+        let currentStreak = 0;
+        let maxStreak = 0;
+        let lastTimestamp = null;
+        
+        sortedEntries.forEach(([timestamp, value]) => {
+            if (value > 0) {
+                if (lastTimestamp === null || timestamp - lastTimestamp === 86400) {
+                    currentStreak++;
+                } else {
+                    currentStreak = 1;
+                }
+                maxStreak = Math.max(maxStreak, currentStreak);
+            } else {
+                currentStreak = 0;
+            }
+            lastTimestamp = timestamp;
+        });
+        
+        console.log("Current streak:", currentStreak);
+        console.log("Max streak:", maxStreak);
+
+        return {currentStreak, maxStreak};
     }).catch(function (error) {
         console.error(error);
     });

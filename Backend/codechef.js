@@ -10,7 +10,6 @@ module.exports = async (req, res) => {
             httpsAgent: new https.Agent({ keepAlive: true }),
             headers: {
                 'Content-Type': 'application/xml',
-                'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
             }
         });
         const { data } = await instance.get(`/${req.params.id}`);
@@ -38,8 +37,8 @@ module.exports = async (req, res) => {
         $('.rating-ranks ul li strong').each((i, x) => {
             user.ranks[map[i]] = parseInt($(x).text().trim());
         })
-        user.problems_solved += Number($('section.problems-solved > h3:nth-child(3)').text().trim().match(/(\d+)/)[0])
-        user.problems_solved += Number($('section.problems-solved > h3:nth-child(1)').text().trim().match(/(\d+)/)[0])
+        user.problems_solved += Number($('h3:contains("Total Problems Solved")').text().split(': ')[1])
+        // user.problems_solved += Number($('section.problems-solved > div > h3:nth-child(1)').text().trim().match(/(\d+)/)[0])
         res.status(200).json(user);
     } catch (e) {
         res.status(500).json({ message: e.message });

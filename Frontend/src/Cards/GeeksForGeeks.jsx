@@ -8,7 +8,7 @@ export const GeeksForGeeks = ({ Data }) => {
       {
 
         Data ?
-          <Card className='shadow' style={{ width: '14rem' }}>
+          <Card className='shadow' style={{ width: '15rem' }}>
             <Card.Img variant="top" src={image} />
             <Card.Body>
               <Card.Title>GeeksForGeeks</Card.Title>

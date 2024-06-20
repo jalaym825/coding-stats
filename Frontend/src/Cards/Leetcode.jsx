@@ -3,11 +3,12 @@ import React from 'react'
 import image from '../assets/leetcode.png'
 
 export const Leetcode = ({ Data }) => {
+  console.log(Data)
   return (
     <>
       {
         Data ?
-          <Card className='shadow' style={{ width: '14rem' }}>
+          <Card className='shadow' style={{ width: '15rem' }}>
             <Card.Img variant="top" src={image} />
             <Card.Body>
               <Card.Title>LeetCode</Card.Title>
@@ -18,6 +19,7 @@ export const Leetcode = ({ Data }) => {
               <ListGroup.Item>Medium Problems: {Data.problems.matchedUser.submitStatsGlobal.acSubmissionNum[2].count}</ListGroup.Item>
               <ListGroup.Item>Hard Problems: {Data.problems.matchedUser.submitStatsGlobal.acSubmissionNum[3].count}</ListGroup.Item>
               <ListGroup.Item>Total Problems: {Data.problems.matchedUser.submitStatsGlobal.acSubmissionNum[0].count}</ListGroup.Item>
+              <ListGroup.Item>Current Steak: {Data.currentStreak} (Max. {Data.maxStreak})</ListGroup.Item>
             </ListGroup>
             <Card.Body>
               <Card.Link href={`https://leetcode.com/${import.meta.env.VITE_leetcode}`}>Profile</Card.Link>
@@ -35,6 +37,7 @@ export const Leetcode = ({ Data }) => {
               <ListGroup.Item><Placeholder xs={8} /></ListGroup.Item>
               <ListGroup.Item><Placeholder xs={6} />  <Placeholder xs={5} /></ListGroup.Item>
               <ListGroup.Item><Placeholder xs={9} /></ListGroup.Item>
+              <ListGroup.Item><Placeholder xs={8} /></ListGroup.Item>
             </ListGroup>
             <Card.Body>
               <Card.Link href={`https://leetcode.com/${import.meta.env.VITE_leetcode}`}>Profile</Card.Link>

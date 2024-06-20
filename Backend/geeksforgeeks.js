@@ -1,5 +1,4 @@
 const axios = require("axios");
-const https = require('https');
 const cheerio = require("cheerio");
 
 module.exports = async (req, res) => {
@@ -15,7 +14,6 @@ module.exports = async (req, res) => {
         const TotalEasy = $('a[href="#easy"]').text();
         const TotalMedium = $('a[href="#medium"]').text();
         const TotalHard = $('a[href="#hard"]').text();
-        console.log()
         const obj = {
             "rank": InstituteRank,
             "problems_solved": Number(TotalBasic.trim().match(/(\d+)/)[0])+ Number(TotalEasy.trim().match(/(\d+)/)[0])+ Number(TotalMedium.trim().match(/(\d+)/)[0])+ Number(TotalHard.trim().match(/(\d+)/)[0]),
