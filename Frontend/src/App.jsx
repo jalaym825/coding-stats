@@ -21,9 +21,6 @@ export const App = () => {
     const fetchData = async () => {
       try {
         instance.get(`/leetcode/${import.meta.env.VITE_leetcode}`).then((leetcodeResponse) => {
-          for(let i = 0; i < 999999; i++){
-            // console.log('This is a test');
-          }
           setLCData(leetcodeResponse.data);
         })
 
