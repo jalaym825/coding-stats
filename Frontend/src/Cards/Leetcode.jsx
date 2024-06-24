@@ -18,7 +18,7 @@ export const Leetcode = ({ Data }) => {
               <ListGroup.Item>Medium Problems: {Data.problems.submitStatsGlobal.acSubmissionNum[2].count}</ListGroup.Item>
               <ListGroup.Item>Hard Problems: {Data.problems.submitStatsGlobal.acSubmissionNum[3].count}</ListGroup.Item>
               <ListGroup.Item>Total Problems: {Data.problems.submitStatsGlobal.acSubmissionNum[0].count}</ListGroup.Item>
-              <ListGroup.Item>Current Steak: {Data.currentStreak} (Max. {Data.maxStreak})</ListGroup.Item>
+              <ListGroup.Item>Current Streak: {Data.currentStreak} (Max. {Data.maxStreak})</ListGroup.Item>
             </ListGroup>
             <Card.Body>
               <Card.Link href={`https://leetcode.com/${import.meta.env.VITE_leetcode}`}>Profile</Card.Link>
