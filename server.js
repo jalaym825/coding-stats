@@ -2,9 +2,10 @@ const cors = require('cors');
 const express = require('express');
 const axios = require('axios');
 const app = express();
-let { token } = require("./codolio-token.json")
 const fs = require('fs');
 require('dotenv').config()
+
+let token = null;
 
 app.use(express.json());
 app.use(cors());
@@ -17,8 +18,6 @@ const loginCodolio = async () => {
     });
     console.log("Logged in to Codolio");
     token = res.headers['authorization'];
-    fs.writeFileSync("./codolio-token.json", JSON.stringify({ token }));
-    console.log(token)
 };
 
 // Helper function to validate token
